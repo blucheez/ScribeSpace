@@ -1,0 +1,23 @@
+{
+  "name": "scribespace",
+  "version": "0.1.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "electron": "^2.0.2"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blucheez/ScibeSpace.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/blucheez/ScibeSpace/issues"
+  },
+  "homepage": "https://github.com/blucheez/ScibeSpace#readme",
+  "description": ""
+}

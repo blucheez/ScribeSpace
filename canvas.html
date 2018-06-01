@@ -1,0 +1,72 @@
+<html>
+  <head>
+    <title>SketchArea</title>
+    <style>
+      #myCanvas {
+        border: 2px solid black;
+        display: block;
+        margin: 0 auto;
+      }
+    </style>
+  </head>
+  <body>
+    <main id="content">
+
+    </main>
+
+    <script>
+      // create line of communication
+      var messenger = require("electron").ipcRenderer;
+
+      // create the working canvas
+      var canvas = document.createElement("canvas");
+
+      // send a request to server for currentSketchArea
+      messenger.send("canvasRequest", "canvas is ready");
+      messenger.on("canvasReply", (event, arg) => {
+        console.log("canvas got the reply!");
+        console.log(arg);
+        // update the canvas based on the returned information
+        canvas.width = arg.width;
+        canvas.height = arg.height;
+        canvas.id="myCanvas";
+        document.getElementById("content").appendChild(canvas);
+
+        // do the preliminary drawing here (image and links)
+        var draw = canvas.getContext("2d");
+
+        // draw the image
+        var img = new Image();
+        img.src = arg.image;
+        img.onload = function(){
+          draw.drawImage(img, 0, 0);
+
+          // draw the links
+          for(var i = 0; i < arg.links.length; i++) {
+            draw.beginPath();
+            draw.arc(arg.links[i].x, arg.links[i].y, arg.links[i].radius, 0, 2 * Math.PI);
+            draw.stroke();
+          }
+
+
+        }
+      });
+
+      // create a canvas and edit it
+      // var c = document.getElementById("myCanvas");
+      // var draw = c.getContext("2d");
+      // draw.font = "30px Arial";
+      // draw.fillText("Hello World", 10, 50);
+      //
+      // console.log(c.toDataURL());
+      // img.src = c.toDataURL();
+      // document.getElementById('content').appendChild(img);
+      //
+      // var messenger = require("electron").ipcRenderer;
+      // messenger.send("newImg", img.src);
+
+
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,13 @@
+1 - make a server that can recieve images and store them
+2 - make it so that the server can take a series of images, with a particular naming convention,
+and then store them in a corresponding file directory
+3 - add to the sent package a json file containing the clickable regions where links to other images are defined
+4 - BONUS - add a button that allows the user to exit the image and go up a directory
+5 - BONUS - add animations to transition between the images
+6 - allow the user to insert in image in lieu of the current image (placeholder for live updating of the image)
+7 - allow the user to define a new clickable area, default link to a blank image
+
+1 - create a simple drawing app, that can first take touch input and store it as an image
+2 - BONUS - make it so that the drawing app can do palm rejection
+3 - BONUS -make it so that the drawing app works with windows ink
+4 - BONUS - make it so that the drawing app can recognize an active stylus
