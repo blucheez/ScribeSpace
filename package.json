@@ -6,7 +6,9 @@
     "start": "electron ."
   },
   "dependencies": {
-    "electron": "^2.0.2"
+    "bootstrap": "^4.1.1",
+    "electron": "^2.0.2",
+    "fs": "0.0.1-security"
   },
   "devDependencies": {},
   "repository": {

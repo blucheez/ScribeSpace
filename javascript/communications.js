@@ -4,15 +4,29 @@ var messenger = require("electron").ipcRenderer;
 // when the user saves, send an update to the server
 // takes in an array of links
 function update(links) {
-  // the server needs to know which canvas to update
-  // the server already knows which canvas, it is the currentSketchArea
-  // it just needs the new image and link array
-  var toSend = {
-    "image" : canvas.toDataURL(),
-    "links" : links
-  }
+  // get the correct toDataURL
+  var tempCanvas = document.createElement("canvas");
+  tempCanvas.height = oldCanvas.height;
+  tempCanvas.width = oldCanvas.width;
+  var tempImg = document.createElement("img");
+  tempImg.src = canvas.toDataURL();
 
-  messenger.send("canvasUpdate", toSend);
+  var ctx = tempCanvas.getContext("2d");
+  tempImg.onload = function() {
+    ctx.drawImage(tempImg,0,0, oldCanvas.width, oldCanvas.height);
+
+    // the server needs to know which canvas to update
+    // the server already knows which canvas, it is the currentSketchArea
+    // it just needs the new image and link array
+    var toSend = {
+      "height" : oldCanvas.height,
+      "width" : oldCanvas.width,
+      "image" : tempCanvas.toDataURL(),
+      "links" : links
+    }
+
+    messenger.send("canvasUpdate", toSend);
+  }
 }
 
 // change the current canvas to a different one
@@ -25,6 +39,8 @@ function changeTo(address) {
 // return the address of this new canvas
 function addCanvas() {
   var toAdd = {
+    "height" : oldCanvas.height,
+    "width" : oldCanvas.width,
     "image" : "",
     "links" : []
   }

@@ -47,6 +47,14 @@ messenger.on("canvasRequest", (event, arg) => {
 
 messenger.on("canvasUpdate", (event, arg) => {
   currentSketchArea.canvases[index] = arg;
+  data.SketchAreas[arg] = currentSketchArea;
+  require("fs").writeFile("data.json", JSON.stringify(data), (err) => {
+    if(err) {
+      console.log(err);
+      throw err;
+    }
+    console.log("updated data");
+  });
   event.sender.send("confirmation", "canvas update recorded");
 });
 
