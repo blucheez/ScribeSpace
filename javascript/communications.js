@@ -53,3 +53,8 @@ function addCanvas() {
 messenger.on("confirmation", (event, arg) => {
   console.log(arg);
 });
+
+// request a return to the dashboard
+function goHome() {
+  messenger.send("goHome", "request to go home");
+}

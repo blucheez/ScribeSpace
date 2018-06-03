@@ -19,7 +19,7 @@ function changeMode(str) {
   } else {
     cursor(ARROW);
   }
-  if(str === "view") {
+  if(str === "save") {
     update(links);
   }
   console.log("Mode is " + mode);

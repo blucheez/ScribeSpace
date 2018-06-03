@@ -6,26 +6,66 @@ messenger.send("dashboardRequest", "dashboard ready");
 messenger.on("dashboardReply", (event, arg) => {
   // arg contains the data json file
   for(var i = 0; i < arg.size; i++) {
+    console.log("creating canvas " + i);
+    console.log(arg.SketchAreas[i]);
     var tempCanvas = document.createElement("div");
 
     // add the canvas to the dashboard
     tempCanvas.className = "canvas";
     tempCanvas.innerHTML = "<img src= '" + arg.SketchAreas[i].canvases[0].image + "' />";
 
-    // assign a task for when the element is clicked
-    // when clicked, tell server to go to the ith sketcharea
-    var index = i;
-    tempCanvas.onclick = function() {
-      // (defined later)
-      select(index);
-    };
+    // create the buttons associated with deleting the particular canvas
+    var deleteButton = document.createElement("button");
+    deleteButton.className = "delete";
+    deleteButton.innerHTML = "Delete " + arg.SketchAreas[i].name;
 
+    // add click triggers
+    (function(index) {
+      tempCanvas.onclick = function() {
+        console.log("you clicked on " + index);
+        messenger.send("dashboardSelect", index);
+      }
+      deleteButton.onclick = function() {
+        console.log("DELETE" + index);
+        messenger.send("deleteSketchArea", index);
+      }
+    })(i);
+    
     // actually add the thing
     document.getElementById("content").appendChild(tempCanvas);
+    document.getElementById("content").appendChild(deleteButton);
   }
+
+  // create and add a canvas meant only for adding a new canvas
+  var addCanvas = document.createElement("div");
+  addCanvas.className = "canvas";
+  addCanvas.id = "addCanvas";
+  addCanvas.onclick = function() {
+    // (also defined later)
+    add();
+  }
+  document.getElementById("content").appendChild(addCanvas);
 });
 
-// send the server a click on a particular SketchArea
-function select(index) {
-  messenger.send("dashboardSelect", index);
+// adds a new empty SketchArea to the argument
+function add() {
+  console.log("ADD");
+  // create an empty SketchArea with specifications
+  var newSketchArea = {
+    "name" : "defaultName",
+    "canvases" : [
+      {
+        "height" : 400,
+        "width" : 600,
+        "image" : "",
+        "links" : []
+      }
+    ]
+  }
+  messenger.send("addSketchArea", newSketchArea);
+}
+
+// delete a sketch element from the argument with the given index
+function end(index) {
+
 }

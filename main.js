@@ -3,6 +3,7 @@ var electron = require("electron");
 var app = electron.app;
 var browserwindow = electron.BrowserWindow;
 var messenger = electron.ipcMain;
+var fs = require("fs");
 
 // information about current view
 var data = require("./data.json");
@@ -48,13 +49,7 @@ messenger.on("canvasRequest", (event, arg) => {
 messenger.on("canvasUpdate", (event, arg) => {
   currentSketchArea.canvases[index] = arg;
   data.SketchAreas[arg] = currentSketchArea;
-  require("fs").writeFile("data.json", JSON.stringify(data), (err) => {
-    if(err) {
-      console.log(err);
-      throw err;
-    }
-    console.log("updated data");
-  });
+  refreshData();
   event.sender.send("confirmation", "canvas update recorded");
 });
 
@@ -69,3 +64,33 @@ messenger.on("addCanvas", (event, arg) => {
   currentSketchArea.canvases.push(arg);
   event.sender.send("newAddr", i);
 });
+
+messenger.on("addSketchArea", (event, arg) => {
+  data.SketchAreas.push(arg);
+  data.size++;
+  refreshData();
+  console.log("added" + arg.name);
+  win.loadFile("dashboard.html");
+});
+
+messenger.on("deleteSketchArea", (event, arg) => {
+  data.SketchAreas.splice(arg, 1);
+  data.size--;
+  refreshData();
+  console.log("deleted " + arg);
+  win.loadFile("dashboard.html");
+});
+
+messenger.on("goHome", (event, arg) => {
+  win.loadFile("dashboard.html");
+});
+
+function refreshData() {
+  fs.writeFile("data.json", JSON.stringify(data), (err) => {
+    if(err) {
+      console.log(err);
+      throw err;
+    }
+    console.log("updated data");
+  });
+}
