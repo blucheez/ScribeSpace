@@ -5,9 +5,13 @@ var messenger = require("electron").ipcRenderer;
 messenger.send("dashboardRequest", "dashboard ready");
 messenger.on("dashboardReply", (event, arg) => {
   // arg contains the data json file
-  for(var i = 0; i < arg.size; i++) {
-    console.log("creating canvas " + i);
-    console.log(arg.SketchAreas[i]);
+  var max = 0;
+  if(arg != undefined) {
+    max = arg.size;
+  }
+
+  // for loop creates every canvas and delete button
+  for(var i = 0; i < max; i++) {
     var tempCanvas = document.createElement("div");
 
     // add the canvas to the dashboard
@@ -30,8 +34,8 @@ messenger.on("dashboardReply", (event, arg) => {
         messenger.send("deleteSketchArea", index);
       }
     })(i);
-    
-    // actually add the thing
+
+    // actually add the things
     document.getElementById("content").appendChild(tempCanvas);
     document.getElementById("content").appendChild(deleteButton);
   }
@@ -49,23 +53,19 @@ messenger.on("dashboardReply", (event, arg) => {
 
 // adds a new empty SketchArea to the argument
 function add() {
-  console.log("ADD");
   // create an empty SketchArea with specifications
   var newSketchArea = {
     "name" : "defaultName",
     "canvases" : [
       {
+        "parent" : -1,
         "height" : 400,
         "width" : 600,
         "image" : "",
-        "links" : []
+        "links" : [],
+        "index" : 0
       }
     ]
   }
   messenger.send("addSketchArea", newSketchArea);
-}
-
-// delete a sketch element from the argument with the given index
-function end(index) {
-
 }
