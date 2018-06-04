@@ -115,7 +115,7 @@ function touchStarted() {
       var yDist = Math.pow(link.y - y, 2);
 
       if(Math.pow(link.radius, 2) > (xDist + yDist)) {
-        console.log("you hit a link!");
+        changeTo(link.address);
       }
 
     }

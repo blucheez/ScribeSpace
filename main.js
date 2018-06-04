@@ -8,9 +8,9 @@ var fs = require("fs");
 // information about current view
 var data;
 // accessible SketchArea for the canvas to know what to display
-let currentSketchArea;
+let currentSketchArea = -1;
 // stores which canvas to display
-var index = -1;
+var currentCanvas = -1;
 // accessible context for current window
 let win;
 
@@ -40,10 +40,10 @@ messenger.on("dashboardSelect", (event, arg) => {
   console.log("I received an instruction to go to " + arg);
 
   // now point to an actual canvas
-  index = 0;
+  currentCanvas = 0;
 
   // update currentSketchArea
-  currentSketchArea = data.SketchAreas[arg];
+  currentSketchArea = arg;
 
   // now load the canvas file
   win.loadFile("canvas.html");
@@ -52,36 +52,34 @@ messenger.on("dashboardSelect", (event, arg) => {
 // tell the canvas what is going on
 messenger.on("canvasRequest", (event, arg) => {
   console.log(arg);
-  event.sender.send("canvasReply", currentSketchArea.canvases[index]);
+  event.sender.send("canvasReply", data.SketchAreas[currentSketchArea].canvases[currentCanvas]);
 });
 
 messenger.on("canvasUpdate", (event, arg) => {
-  currentSketchArea.canvases[index] = arg;
-  data.SketchAreas[arg] = currentSketchArea;
+  data.SketchAreas[currentSketchArea].canvases[currentCanvas] = arg;
+  console.log("Updated " + arg.index + ", which should be the same # as " + currentCanvas + ".")
   refreshData();
   event.sender.send("confirmation", "canvas update recorded");
 });
 
 messenger.on("changeCanvas", (event, arg) => {
-  index = arg;
-  console.log("The new index will be " + index);
-  if(index < 0) {
+  currentCanvas = arg;
+  console.log("The new canvas index will be " + currentCanvas);
+  if(currentCanvas < 0) {
     console.log("going home");
     win.loadFile("dashboard.html");
   } else {
-    console.log("going to " + index);
+    console.log("going to " + currentCanvas);
     win.loadFile("canvas.html");
   }
   event.sender.send("confirmation", "changing canvas to " + arg);
 });
 
-messenger.on("addCanvas", (event, arg, message) => {
-  console.log("I receieved a arg from link #" + message);
-  var i = currentSketchArea.canvases.length;
+messenger.on("addCanvas", (event, arg, linkIndex) => {
+  var i = data.SketchAreas[currentSketchArea].canvases.length;
   arg.index = i;
-  currentSketchArea.canvases.push(arg);
-  console.log("now I will tell link #" + message + " to be addressed to " + i);
-  event.sender.send("newAddr", i, message);
+  data.SketchAreas[currentSketchArea].canvases.push(arg);
+  event.sender.send("newAddr", i, linkIndex);
 });
 
 messenger.on("addSketchArea", (event, arg) => {
@@ -106,7 +104,7 @@ messenger.on("deleteSketchArea", (event, arg) => {
 });
 
 messenger.on("goHome", (event, arg) => {
-  index = -1;
+  currentCanvas = -1;
   win.loadFile("dashboard.html");
 });
 
